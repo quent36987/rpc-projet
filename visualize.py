@@ -133,6 +133,7 @@ def voxel(x0, y0, z0, x1, y1, z1, color):
             path(face_a, fill=color.lighten(50 / 100))
     )
 
+
 def open_file_default(file_path):
     system_platform = platform.system()
 
@@ -142,6 +143,7 @@ def open_file_default(file_path):
         subprocess.Popen(['open', file_path])
     else:  # For Linux or other Unix-based systems
         subprocess.Popen(['xdg-open', file_path])
+
 
 COLORS = [
     rgb(201, 167, 57),
@@ -171,9 +173,47 @@ COLORS = [
     rgb(207, 160, 106)
 ]
 
+
+# FIXME: create a folder with files (1 file = 1 truck)
+def visualize(input):
+    truck_no = 0
+    svg_content = []
+    svg_content.append("""<svg xmlns="http://www.w3.org/2000/svg" width="560" height="560">""")
+    blocks = []
+    first = True
+    i = 0
+    for (i, line) in enumerate(input):
+        if first:
+            first = False
+            if line == "SAT\n":
+                continue
+            elif line == "UNSAT\n":
+                exit(0)
+            else:
+                raise ValueError("Invalid input")
+        if line == "\n":
+            break
+        (truck, x0, y0, z0, x1, y1, z1) = map(int, line.split(" "))
+        if truck != truck_no:
+            continue
+        blocks.append((i, (x0, y0, z0, x1, y1, z1)))
+        i += 1
+    blocks.sort(key=lambda x: (x[1][3], x[1][4], x[1][5]))
+    for (i, (x0, y0, z0, x1, y1, z1)) in blocks:
+        svg_content.append(voxel(x0, y0, z0, x1, y1, z1, COLORS[i % len(COLORS)]))
+    svg_content.append("</svg>")
+
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".svg", delete=False) as f:
+        f.write("\n".join(svg_content) + "\n")
+        output = f.name
+
+    open_file_default(output)
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser("visualize.py")
-    parser.add_argument("input", nargs="?", type=argparse.FileType("r"), default="output.sample", help="Le fichier d'entrée (utilise stdin par défaut)")
+    parser.add_argument("input", nargs="?", type=argparse.FileType("r"), default="output.sample",
+                        help="Le fichier d'entrée (utilise stdin par défaut)")
     parser.add_argument("--truck-no", type=int, default=0, dest="truck_no", help="Le numéro du véhicule à visualiser")
 
     args = parser.parse_args()
