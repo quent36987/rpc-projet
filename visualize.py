@@ -174,7 +174,7 @@ COLORS = [
 ]
 
 
-# FIXME: create a folder with files (1 file = 1 truck)
+# FIXME: all trucks on the same svg
 def visualize(input):
     truck_no = 0
     svg_content = []

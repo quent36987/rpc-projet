@@ -1,6 +1,8 @@
+import visualize
 from product import Product
 from parser import Parser
 from Truck import Truck
+from visualize import visualize
 
 
 class Solver:
@@ -29,16 +31,22 @@ class Solver:
             self.trucks[-1].can_place_product(product)
 
     def output(self, output_path="output.txt"):
-        # FIXME output truck renvoi un string plutot ? plus propre ?
-        if self.is_sat:
-            for truck in self.trucks:
-                truck.output(output_path)
+        with open(output_path, 'w') as file:
+            if self.is_sat:
+                file.write("SAT\n")
+                for truck in self.trucks:
+                    # FIXME: truck.output(file)
+                    truck.output(output_path)
+            else:
+                file.write("UNSAT\n")
 
     def visualize(self):
-
+        self.output("output.txt")
+        visualize.visualize("output.txt")
 
     def __str__(self):
         print(f"Solver({self.file_path})")
+        print("SAT" if self.is_sat else "UNSAT")
         print("Trucks:")
         for truck in self.trucks:
             print(truck)
