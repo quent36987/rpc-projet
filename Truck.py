@@ -1,5 +1,9 @@
+import sys
+
+
 class Truck:
-    def __init__(self, length, width, height):
+    def __init__(self, id, length, width, height):
+        self.id = id
         self.length = length
         self.width = width
         self.height = height
@@ -7,12 +11,11 @@ class Truck:
         self.products = []
 
     def place_product(self, product, x1, y1, z1, x2, y2, z2):
-        length = len(self.products) + 1
         for x in range(x1, x2):
             for y in range(y1, y2):
                 for z in range(z1, z2):
-                    self.matrix[x][y][z] = length
-        self.products.append(product)
+                    self.matrix[x][y][z] = product.id
+        self.products.append((product, [x1, y1, z1, x2, y2, z2]))
 
     def is_bigger_than(self, product):
         product_dimensions = [product.length, product.width, product.height]
@@ -25,6 +28,12 @@ class Truck:
                         return True
                     product_dimensions[i], product_dimensions[j] = product_dimensions[j], product_dimensions[i]
         return False
+
+    def output(self, output_path="output.txt"):
+        with open(output_path, 'w') as file:
+            for product, coordinates in self.products:
+                file.write(f"{self.id} {' '.join(map(str, coordinates))}\n")
+
 
     def __str__(self):
         for z in range(self.height):

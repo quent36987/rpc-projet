@@ -1,9 +1,10 @@
 class Product:
-    def __init__(self, length, width, height):
+    def __init__(self, id, length, width, height):
         self.length = length
         self.width = width
         self.height = height
         self.volume = length * width * height
+        self.id = id
 
     def __str__(self):
-        return f"Product({self.length}, {self.width}, {self.height})"
+        return f"Product(id:{self.id}, {self.length} x {self.width} x {self.height})"

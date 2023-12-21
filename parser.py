@@ -19,9 +19,9 @@ class Parser:
 
             num_products = int(file.readline())
 
-            for _ in range(num_products):
+            for i in range(num_products):
                 product_dimensions = list(map(int, file.readline().split()))
-                product = Product(*product_dimensions)
+                product = Product(i + 1,*product_dimensions)
                 self.product_list.append(product)
 
     def __str__(self):
