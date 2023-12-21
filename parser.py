@@ -1,36 +1,32 @@
-from produit import Produit
+from product import Product
+
 
 class Parser:
-    def __init__(self, chemin_fichier):
-        self.chemin_fichier = chemin_fichier
+    def __init__(self, file_path):
+        self.file_path = file_path
 
-        self.longueur_camion = 0
-        self.largeur_camion = 0
-        self.hauteur_camion = 0
+        self.truck_length = 0
+        self.truck_width = 0
+        self.truck_height = 0
 
-        self.liste_produits = []
-        self.parse_fichier()
+        self.product_list = []
+        self.parse_file()
 
-    def parse_fichier(self):
-        with open(self.chemin_fichier, 'r') as file:
-            dimensions_camion = list(map(int, file.readline().split()))
-            self.longueur_camion, self.largeur_camion, self.hauteur_camion = dimensions_camion
+    def parse_file(self):
+        with open(self.file_path, 'r') as file:
+            truck_dimensions = list(map(int, file.readline().split()))
+            self.truck_length, self.truck_width, self.truck_height = truck_dimensions
 
-            nb_produits = int(file.readline())
+            num_products = int(file.readline())
 
-            for _ in range(nb_produits):
-                dimensions_produit = list(map(int, file.readline().split()))
-                produit = Produit(*dimensions_produit)
-                self.liste_produits.append(produit)
+            for _ in range(num_products):
+                product_dimensions = list(map(int, file.readline().split()))
+                product = Product(*product_dimensions)
+                self.product_list.append(product)
 
     def __str__(self):
-        print(f"Dimensions du camion : {self.longueur_camion} x {self.largeur_camion} x {self.hauteur_camion}")
-        print("Liste des produits :")
-        for produit in self.liste_produits:
-            print(produit)
+        print(f"Truck dimensions: {self.truck_length} x {self.truck_width} x {self.truck_height}")
+        print("Product list:")
+        for product in self.product_list:
+            print(product)
         return ""
-
-# if __name__ == "__main__":
-#     chemin_fichier = 'input.sample'
-#     parser = Parser(chemin_fichier)
-#     print(parser)
