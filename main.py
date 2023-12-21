@@ -1,4 +1,4 @@
-from camion import Camion
+from Truck import Truck
 from produit import Produit
 from parser import Parser
 
