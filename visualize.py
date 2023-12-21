@@ -93,7 +93,7 @@ def path(points, fill="none", fill_opacity="1", stroke="black", stroke_width=".5
 
 
 def voxel(x0, y0, z0, x1, y1, z1, color):
-    scale = 1
+    scale = 10
     sin = .5
     cos = math.sqrt(3) / 2
 
@@ -191,26 +191,13 @@ def visualizeTruck(input, truck_no):
         if line == "\n":
             break
         (truck, x0, y0, z0, x1, y1, z1) = map(int, line.split(" "))
-
         if truck != truck_no:
             continue
         blocks.append((i, (x0, y0, z0, x1, y1, z1)))
         i += 1
     blocks.sort(key=lambda x: (x[1][3], x[1][4], x[1][5]))
-
-    max_size = max(max((x1 - x0, y1 - y0, z1 - z0)) for (_, (x0, y0, z0, x1, y1, z1)) in blocks)
-
-    zoom_factor = 100 / max_size  # Ajustez 100 selon vos besoins pour définir le niveau de zoom
-
     for (i, (x0, y0, z0, x1, y1, z1)) in blocks:
-        x0 *= zoom_factor
-        y0 *= zoom_factor
-        z0 *= zoom_factor
-        x1 *= zoom_factor
-        y1 *= zoom_factor
-        z1 *= zoom_factor
         svg_content.append(voxel(x0, y0, z0, x1, y1, z1, COLORS[i % len(COLORS)]))
-
     svg_content.append("</svg>")
 
     with tempfile.NamedTemporaryFile(mode="w", suffix=".svg", delete=False) as f:
