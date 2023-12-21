@@ -173,10 +173,7 @@ COLORS = [
     rgb(207, 160, 106)
 ]
 
-
-# FIXME: all trucks on the same svg
-def visualize(input):
-    truck_no = 0
+def visualizeTruck(input, truck_no):
     svg_content = []
     svg_content.append("""<svg xmlns="http://www.w3.org/2000/svg" width="560" height="560">""")
     blocks = []
@@ -194,13 +191,26 @@ def visualize(input):
         if line == "\n":
             break
         (truck, x0, y0, z0, x1, y1, z1) = map(int, line.split(" "))
+
         if truck != truck_no:
             continue
         blocks.append((i, (x0, y0, z0, x1, y1, z1)))
         i += 1
     blocks.sort(key=lambda x: (x[1][3], x[1][4], x[1][5]))
+
+    max_size = max(max((x1 - x0, y1 - y0, z1 - z0)) for (_, (x0, y0, z0, x1, y1, z1)) in blocks)
+
+    zoom_factor = 100 / max_size  # Ajustez 100 selon vos besoins pour définir le niveau de zoom
+
     for (i, (x0, y0, z0, x1, y1, z1)) in blocks:
+        x0 *= zoom_factor
+        y0 *= zoom_factor
+        z0 *= zoom_factor
+        x1 *= zoom_factor
+        y1 *= zoom_factor
+        z1 *= zoom_factor
         svg_content.append(voxel(x0, y0, z0, x1, y1, z1, COLORS[i % len(COLORS)]))
+
     svg_content.append("</svg>")
 
     with tempfile.NamedTemporaryFile(mode="w", suffix=".svg", delete=False) as f:
@@ -218,34 +228,4 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    svg_content = []
-    svg_content.append("""<svg xmlns="http://www.w3.org/2000/svg" width="560" height="560">""")
-    blocks = []
-    first = True
-    i = 0
-    for (i, line) in enumerate(args.input):
-        if first:
-            first = False
-            if line == "SAT\n":
-                continue
-            elif line == "UNSAT\n":
-                exit(0)
-            else:
-                raise ValueError("Invalid input")
-        if line == "\n":
-            break
-        (truck, x0, y0, z0, x1, y1, z1) = map(int, line.split(" "))
-        if truck != args.truck_no:
-            continue
-        blocks.append((i, (x0, y0, z0, x1, y1, z1)))
-        i += 1
-    blocks.sort(key=lambda x: (x[1][3], x[1][4], x[1][5]))
-    for (i, (x0, y0, z0, x1, y1, z1)) in blocks:
-        svg_content.append(voxel(x0, y0, z0, x1, y1, z1, COLORS[i % len(COLORS)]))
-    svg_content.append("</svg>")
-
-    with tempfile.NamedTemporaryFile(mode="w", suffix=".svg", delete=False) as f:
-        f.write("\n".join(svg_content) + "\n")
-        output = f.name
-
-    open_file_default(output)
+    visualizeTruck(args.input, args.truck_no)

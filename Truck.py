@@ -1,5 +1,5 @@
 import sys
-
+from visualize import *
 
 class Truck:
     def __init__(self, id, length, width, height):
@@ -43,3 +43,11 @@ class Truck:
                 print()
             print()
         return f"Truck({self.length}, {self.width}, {self.height})"
+
+    def visualize(self):
+        with open("output.txt", 'w') as file:
+            file.write("SAT\n")
+            for product, coordinates in self.products:
+                file.write(f"{self.id} {' '.join(map(str, coordinates))}\n")
+        with open("output.txt", 'r') as file:
+            visualizeTruck(file, 1)

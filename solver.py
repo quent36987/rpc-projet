@@ -29,6 +29,7 @@ class Solver:
             self.trucks.append(Truck(len(self.trucks) + 1, self.parser.truck_length, self.parser.truck_width,
                                      self.parser.truck_height))
             self.trucks[-1].can_place_product(product)
+        self.is_sat = True
 
     def output(self, output_path="output.txt"):
         with open(output_path, 'w') as file:
