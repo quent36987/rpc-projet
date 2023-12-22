@@ -57,16 +57,37 @@ class Truck:
                             biggest_space_coordinates = [x, y, z]
         return biggest_space_coordinates
 
+
+    '''
+        @param product: Product
+        @param x: int
+        @param y: int
+        @param z: int
+        @return: bool
+        Search for the first available place in the truck and place the product if it fits, otherwise keep searching and if there is no place return False
+    '''
     def can_place_product(self, product, x, y, z):
-        for x2 in range(x, x + product.length):
-            for y2 in range(y, y + product.width):
-                for z2 in range(z, z + product.height):
-                    if x2 >= self.length or y2 >= self.width or z2 >= self.height:
-                        return False
-                    if self.matrix[x2][y2][z2] != 0:
-                        return False
-        self.place_product(product, x, y, z, x + product.length, y + product.width, z + product.height)
-        return True
+        for x2 in range(0, self.width):
+            for y2 in range(0, self.height):
+                for z2 in range(0, self.length):
+                    if self.matrix[x2][y2][z2] == 0:
+                        if x2 + product.width <= self.width and y2 + product.height <= self.height and z2 + product.length <= self.length:
+                            for x3 in range(x2, x2 + product.width):
+                                for y3 in range(y2, y2 + product.height):
+                                    for z3 in range(z2, z2 + product.length):
+                                        if self.matrix[x3][y3][z3] != 0:
+                                            break
+                                    else:
+                                        continue
+                                    break
+                                else:
+                                    continue
+                                break
+                            else:
+                                self.place_product(product, x2, y2, z2, x2 + product.width, y2 + product.height, z2 + product.length)
+                                return True
+        return False
+
 
 
     def __str__(self):
