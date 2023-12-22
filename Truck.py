@@ -4,9 +4,9 @@ from visualize import *
 class Truck:
     def __init__(self, id, length, width, height):
         self.id = id
-        self.length = length
-        self.width = width
-        self.height = height
+        self.length = length # == z
+        self.width = width # == x
+        self.height = height # == y
         self.matrix = [[[0 for _ in range(height)] for _ in range(width)] for _ in range(length)]
         self.products = []
 
@@ -66,7 +66,7 @@ class Truck:
         @return: bool
         Search for the first available place in the truck and place the product if it fits, otherwise keep searching and if there is no place return False
     '''
-    def can_place_product(self, product, x, y, z):
+    def can_place_product(self, product):
         for x2 in range(0, self.width):
             for y2 in range(0, self.height):
                 for z2 in range(0, self.length):
