@@ -1,12 +1,14 @@
 import sys
 from visualize import *
+from visualize3d import *
+
 
 class Truck:
     def __init__(self, id, length, width, height):
         self.id = id
-        self.length = length # == z
-        self.width = width # == x
-        self.height = height # == y
+        self.length = length  # == z
+        self.width = width  # == x
+        self.height = height  # == y
         self.matrix = [[[0 for _ in range(height)] for _ in range(width)] for _ in range(length)]
         self.products = []
 
@@ -29,13 +31,13 @@ class Truck:
                     product_dimensions[i], product_dimensions[j] = product_dimensions[j], product_dimensions[i]
         return False
 
-    def output(self, output_path="output.txt"):
-        with open(output_path, 'w') as file:
-            for product, coordinates in self.products:
-                file.write(f"{self.id} {' '.join(map(str, coordinates))}\n")
+    def output(self, output_path):
+        for product, coordinates in self.products:
+            output_path.write(f"{self.id} {' '.join(map(str, coordinates))}\n")
 
     def available_space(self):
-        return sum(self.matrix[x][y][z] == 0 for x in range(self.length) for y in range(self.width) for z in range(self.height))
+        return sum(self.matrix[x][y][z] == 0 for x in range(self.length) for y in range(self.width) for z in
+                   range(self.height))
 
     def biggest_available_space(self):
         biggest_space = 0
@@ -57,7 +59,6 @@ class Truck:
                             biggest_space_coordinates = [x, y, z]
         return biggest_space_coordinates
 
-
     '''
         @param product: Product
         @param x: int
@@ -66,6 +67,7 @@ class Truck:
         @return: bool
         Search for the first available place in the truck and place the product if it fits, otherwise keep searching and if there is no place return False
     '''
+
     def can_place_product(self, product):
         for x2 in range(0, self.width):
             for y2 in range(0, self.height):
@@ -84,11 +86,10 @@ class Truck:
                                     continue
                                 break
                             else:
-                                self.place_product(product, x2, y2, z2, x2 + product.width, y2 + product.height, z2 + product.length)
+                                self.place_product(product, x2, y2, z2, x2 + product.width, y2 + product.height,
+                                                   z2 + product.length)
                                 return True
         return False
-
-
 
     def __str__(self):
         for z in range(self.height):
@@ -106,3 +107,6 @@ class Truck:
                 file.write(f"{self.id} {' '.join(map(str, coordinates))}\n")
         with open("output.txt", 'r') as file:
             visualizeTruck(file, 1)
+
+    def visualize3D(self):
+        visualize3d(self.matrix)
