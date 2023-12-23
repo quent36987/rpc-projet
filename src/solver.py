@@ -24,7 +24,6 @@ class Solver:
                     return
 
                 if truck.can_place_product(product):
-                    print(f"Placing product {product.id} in truck {truck.id}")
                     break
                 if truck == self.trucks[-1]:
                     self.trucks.append(Truck(len(self.trucks) + 1, self.parser.truck_length, self.parser.truck_width,
