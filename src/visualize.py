@@ -173,6 +173,7 @@ COLORS = [
     rgb(207, 160, 106)
 ]
 
+
 def visualizeTruck(input, truck_no):
     svg_content = []
     svg_content.append("""<svg xmlns="http://www.w3.org/2000/svg" width="560" height="560">""")

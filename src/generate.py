@@ -47,7 +47,8 @@ MAX_ITEM_DIMENSIONS = Dimension("500x500x500")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser("generate.py")
-    parser.add_argument("--league", type=str, choices=["bronze", "silver", "gold"], default="bronze", help="Le niveau de la league")
+    parser.add_argument("--league", type=str, choices=["bronze", "silver", "gold"], default="bronze",
+                        help="Le niveau de la league")
     parser.add_argument("--seed", type=int, default=42, help="Graine pour le générateur de nombres aléatoires")
     parser.add_argument("--max-truck-dimensions", type=Dimension, default=MAX_TRUCK_DIMENSIONS,
                         dest="max_truck_dimensions", help="Dimensions maximales des véhicules")
