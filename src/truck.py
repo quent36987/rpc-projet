@@ -6,9 +6,9 @@ from visualize3d import *
 class Truck:
     def __init__(self, id, length, width, height):
         self.id = id
-        self.length = length  # == z
-        self.width = width  # == x
-        self.height = height  # == y
+        self.length = length  # == x
+        self.width = width  # == y
+        self.height = height  # == z
         self.matrix = [[[0 for _ in range(height)] for _ in range(width)] for _ in range(length)]
         self.products = []
 
@@ -19,7 +19,7 @@ class Truck:
             :return:  true if the product was placed, false otherwise
         """
         # Preconditions
-        if x2 > self.width or y2 > self.height or z2 > self.length:
+        if x2 > self.length or y2 > self.width or z2 > self.height:
             return False
         for x in range(x1, x2):
             for y in range(y1, y2):
