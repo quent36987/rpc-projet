@@ -1,19 +1,14 @@
-import visualize
-from parser import Parser
-from truck import Truck
-from visualize3d import *
+from ..truck import Truck
+from ..visualize3d import *
 
 
-class Solver:
-    def __init__(self, input_path):
-        self.file_path = input_path
-        self.parser = Parser(input_path)
+class ClassicSolver:
+    def __init__(self, parser_results):
+        self.parser = parser_results
         self.trucks = []
         self.is_sat = False
-        self.solve()
 
     def solve(self):
-        print("Solving...")
         self.trucks = [Truck(1, self.parser.truck_length, self.parser.truck_width, self.parser.truck_height)]
         self.parser.product_list.sort(key=lambda product: product.volume, reverse=True)
 
@@ -41,9 +36,7 @@ class Solver:
                 file.write("UNSAT\n")
 
     def visualize(self):
-        self.output("../output.txt")
-        with open("../output.txt", 'r') as file:
-            visualize.visualizeTruck(file, 1)
+        self.output("../../output.txt")
 
     def visualize3d(self):
         visualize3d([truck.matrix for truck in self.trucks])

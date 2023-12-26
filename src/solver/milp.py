@@ -1,33 +1,26 @@
-import visualize
-from parser import Parser
-from truck import Truck
-from visualize3d import *
-from mip import Model, BINARY, minimize, xsum, maximize, OptimizationStatus, INTEGER, CONTINUOUS, MINIMIZE
+import mip
+from mip import Model, BINARY, minimize, xsum, OptimizationStatus, INTEGER, MINIMIZE, \
+    SearchEmphasis
+
+from .solver import Solver, Result
+from ..parser.parser import Parser
+from ..truck import Truck
 
 
-class MilpSolver:
-    def __init__(self, input_path):
-        self.file_path = input_path
-        self.parser = Parser(input_path)
-        self.trucks = []
-        self.is_sat = False
-        self.solve
+class MilpSolver(Solver):
 
-    @property
-    def solve(self):
-        print("Solving...")
+    def solve(self, max_seconds=float('inf')) -> Result:
 
-        ## Solver
         # get trucks dimensions
-        L, W, H = self.parser.truck_length, self.parser.truck_width, self.parser.truck_height
+        L, W, H = self.inputs.truck_length, self.inputs.truck_width, self.inputs.truck_height
 
         # Find the minimum number of trucks needed to deliver all products and group them
-        N = len(self.parser.product_list)  # Total number of products
+        N = len(self.inputs.product_list)  # Total number of products
         m = N  # Total number of trucks available (worst case), todo: needed ?
         M = 100000  # A arbitrary large number
 
         model = Model(sense=MINIMIZE)
-        model.emphasis = 2  # focus on feasibility
+        model.emphasis = SearchEmphasis.OPTIMALITY  # focus on feasibility
 
         # s[i][j] = 1 if product i is assigned to the truck j, 0 otherwise
         s = [[model.add_var(var_type=BINARY) for _ in range(m)] for _ in range(N)]
@@ -35,7 +28,7 @@ class MilpSolver:
         n = [model.add_var(var_type=BINARY) for _ in range(m)]
         # p[i],q[i],r[i] = product i dimensions (length, width, height)
         p, q, r = map(list, zip(*map(lambda product: [product.length, product.width, product.height],
-                                     self.parser.product_list)))
+                                     self.inputs.product_list)))
 
         # x[i], y[i], z[i] = product i coordinates of the bottom left corner
         x = [model.add_var(var_type=INTEGER, lb=0) for _ in range(N)]
@@ -79,6 +72,9 @@ class MilpSolver:
         # minimizes the total empty space inside the used containers
         model.objective = minimize(
             xsum(L * W * H * n[j] for j in range(m)) - xsum(p[i] * q[i] * r[i] for i in range(N)))
+
+        # todo: Add objective to minimize the x0, y0, z0 ?
+        # todo: Add objective for box priority
 
         ## Constraints
         # The constraints (1)-(6) ensure that cartons do not overlap each other.
@@ -127,16 +123,17 @@ class MilpSolver:
             model += lz[i] + wz[i] + hz[i] == 1
 
         ## Results
-        result = model.optimize(max_seconds=min(N * 10, 300))  # 10 seconds per box or 300s
+        result = model.optimize(max_seconds=max_seconds)  # 10 seconds per box or 300s
         self.is_sat = result == OptimizationStatus.OPTIMAL or result == OptimizationStatus.FEASIBLE
 
         # Create trucks by grouping products
         if not self.is_sat: return
 
+        trucks = []
         # Get the number of trucks used
         for j in range(m):
             if n[j].x >= 0.99:
-                self.trucks.append(Truck(len(self.trucks) + 1, L, W, H))
+                trucks.append(Truck(len(trucks) + 1, L, W, H))
                 for i in range(N):
                     if s[i][j].x >= 0.99:
                         # todo, extract coordinate from x, y, z using lx, ly, lz, wx, wy, wz, hx, hy, hz !!
@@ -144,31 +141,14 @@ class MilpSolver:
                         x1 = x0 + int(p[i] * lx[i].x + q[i] * wx[i].x + r[i] * hx[i].x)
                         y1 = y0 + int(p[i] * ly[i].x + q[i] * wy[i].x + r[i] * hy[i].x)
                         z1 = z0 + int(p[i] * lz[i].x + q[i] * wz[i].x + r[i] * hz[i].x)
-                        test = self.trucks[-1].place_product(self.parser.product_list[i], x0, y0, z0, x1, y1, z1)
+                        test = trucks[-1].place_product(self.inputs.product_list[i], x0, y0, z0, x1, y1, z1)
 
-                        # test = self.trucks[-1].place_product(self.parser.product_list[i], int(x[i].x), int(y[i].x), int(z[i].x), int(x[i].x + p[i]*), int(y[i].x + q[i]), int(z[i].x + r[i]))
                         print(
-                            f"Placing product {self.parser.product_list[i].id} in truck {self.trucks[-1].id} : ({x0}, {y0}, {z0}) -> ({x1}, {y1}, {z1})")
+                            f"Placing product {self.inputs.product_list[i].id} in truck {trucks[-1].id} : ({x0}, {y0}, {z0}) -> ({x1}, {y1}, {z1})")
                         if not test:
                             print("Error while placing product")
                             exit(1)
-        print(f"Total trucks used: {len(self.trucks)}")
+        print(f"Total trucks used: {len(trucks)}")
 
         # End solver
-
-    def output(self, output_path="output.txt"):
-        with open(output_path, 'w') as file:
-            if self.is_sat:
-                file.write("SAT\n")
-                for truck in self.trucks:
-                    truck.output(file)
-            else:
-                file.write("UNSAT\n")
-
-    def visualize(self):
-        self.output("../output.txt")
-        with open("../output.txt", 'r') as file:
-            visualize.visualizeTruck(file, 1)
-
-    def visualize3d(self):
-        visualize3d([truck.matrix for truck in self.trucks])
+        return trucks
