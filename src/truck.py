@@ -1,6 +1,4 @@
-import sys
-from visualize import *
-from visualize3d import *
+from .visualize3d import *
 
 
 class Truck:
@@ -97,8 +95,6 @@ class Truck:
             file.write("SAT\n")
             for product, coordinates in self.products:
                 file.write(f"{self.id} {' '.join(map(str, coordinates))}\n")
-        with open("../output.txt", 'r') as file:
-            visualizeTruck(file, 1)
 
     def visualize3D(self):
         visualize3d(self.matrix)
