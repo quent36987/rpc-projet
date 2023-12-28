@@ -1,4 +1,5 @@
 from .visualize3d import *
+import sys
 
 
 class Truck:
@@ -18,11 +19,13 @@ class Truck:
         """
         # Preconditions
         if x2 > self.length or y2 > self.width or z2 > self.height:
+            print(f"Error: product {product.id} is out of bounds of the truck {self.id}", file=sys.stderr)
             return False
         for x in range(x1, x2):
             for y in range(y1, y2):
                 for z in range(z1, z2):
                     if self.matrix[x][y][z] != 0:
+                        print(f"Error: product {product.id} overlaps with product {self.matrix[x][y][z]} in the truck {self.id}"),
                         return False
 
         # Actual placing

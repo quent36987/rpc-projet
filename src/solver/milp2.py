@@ -111,7 +111,7 @@ class MilpSolverV2(Solver):
         for i in range(N):
             for j in range(m):
                 model += x[i] + p[i] * lx[i] + q[i] * (lz[i] - wy[i] + hz[i]) + r[i] * (1 - lx[i] - lz[i] + wy[i] - hz[i]) <= L + (1 - s[i][j]) * M
-                model += y[i] + q[i] - wy[i] + p[i] * (1 - lx[i] - lz[i]) + r[i] * (lx[i] + lz[i] - wy[i]) <= W + (1 - s[i][j]) * M
+                model += y[i] + q[i] * wy[i] + p[i] * (1 - lx[i] - lz[i]) + r[i] * (lx[i] + lz[i] - wy[i]) <= W + (1 - s[i][j]) * M
                 model += z[i] + r[i] * hz[i] + q[i] * (1 - lz[i] - hz[i]) + p[i] * lz[i] <= H + (1 - s[i][j]) * M
 
         # box rotations are permitted, each dimension of box i must be parallel to exactly one axis (X, Y or Z) of the container within which it is placed
