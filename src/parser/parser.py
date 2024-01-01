@@ -1,18 +1,16 @@
-from product import Product
+from ..product import Product
+
 
 class Parser:
-    def __init__(self, file_path):
-        self.file_path = file_path
-
+    def __init__(self):
         self.truck_length = 0
         self.truck_width = 0
         self.truck_height = 0
 
         self.product_list = []
-        self.parse_file()
 
-    def parse_file(self):
-        with open(self.file_path, 'r') as file:
+    def parse_file(self, file_path):
+        with open(file_path, 'r') as file:
             truck_dimensions = list(map(int, file.readline().split()))
             self.truck_length, self.truck_width, self.truck_height = truck_dimensions
 
@@ -23,9 +21,10 @@ class Parser:
                 product = Product(i + 1, *product_dimensions)
                 self.product_list.append(product)
 
+        return self
+
     def __str__(self):
-        print(f"Truck dimensions: {self.truck_length} x {self.truck_width} x {self.truck_height}")
-        print("Product list:")
-        for product in self.product_list:
-            print(product)
-        return ""
+        return f"Truck : L={self.truck_length}, W={self.truck_width}, H={self.truck_height}\r\n Products: {', '.join(map(str, self.product_list))})"
+
+    def __repr__(self):
+        return f"Parser({self.truck_length}, {self.truck_width}, {self.truck_height}, [{', '.join(map(repr, self.product_list))}])"

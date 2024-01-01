@@ -1,14 +1,13 @@
+from .visualize3d import *
 import sys
-from visualize import *
-from visualize3d import *
 
 
 class Truck:
     def __init__(self, id, length, width, height):
         self.id = id
-        self.length = length  # == z
-        self.width = width  # == x
-        self.height = height  # == y
+        self.length = length  # == x
+        self.width = width  # == y
+        self.height = height  # == z
         self.matrix = [[[0 for _ in range(height)] for _ in range(width)] for _ in range(length)]
         self.products = []
 
@@ -19,12 +18,14 @@ class Truck:
             :return:  true if the product was placed, false otherwise
         """
         # Preconditions
-        if x2 > self.width or y2 > self.height or z2 > self.length:
+        if x2 > self.length or y2 > self.width or z2 > self.height:
+            print(f"Error: product {product.id} is out of bounds of the truck {self.id}", file=sys.stderr)
             return False
         for x in range(x1, x2):
             for y in range(y1, y2):
                 for z in range(z1, z2):
                     if self.matrix[x][y][z] != 0:
+                        print(f"Error: product {product.id} overlaps with product {self.matrix[x][y][z]} in the truck {self.id}"),
                         return False
 
         # Actual placing
@@ -97,8 +98,6 @@ class Truck:
             file.write("SAT\n")
             for product, coordinates in self.products:
                 file.write(f"{self.id} {' '.join(map(str, coordinates))}\n")
-        with open("../output.txt", 'r') as file:
-            visualizeTruck(file, 1)
 
     def visualize3D(self):
         visualize3d(self.matrix)

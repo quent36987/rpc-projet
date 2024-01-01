@@ -46,22 +46,6 @@ def cubes(pos_x, pos_y, pos_z, color, name=None):
                      lighting={'diffuse': 0.1, 'specular': 2.0, 'roughness': 0.5},
                      name=name)
 
-
-# def visualize3d(matrix):
-#     fig = go.Figure()
-#     size = 1
-#
-#     for i in range(len(matrix)):
-#         for j in range(len(matrix[0])):
-#             for k in range(len(matrix[0][0])):
-#                 if matrix[i][j][k] == 0:
-#                     continue
-#                 pos_x = i * size
-#                 pos_y = j * size
-#                 pos_z = k * size
-#                 color = COLORS[(matrix[i][j][k] - 1) % len(COLORS)]
-#                 fig.add_trace(cubes(size, pos_x, pos_y, pos_z, color))
-
 def visualize3d(matrixes):
     fig = make_subplots(rows=len(matrixes), cols=1, subplot_titles=[f"Truck {i + 1}" for i in range(len(matrixes))],
                         specs=[[{'type': 'scatter3d'}] for _ in range(len(matrixes))])
