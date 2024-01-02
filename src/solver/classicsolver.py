@@ -26,6 +26,8 @@ class ClassicSolver:
                     self.trucks[-1].can_place_product(product)
         self.is_sat = True
 
+        return self.trucks
+
     def output(self, output_path="output.txt"):
         with open(output_path, 'w') as file:
             if self.is_sat:
