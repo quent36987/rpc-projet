@@ -79,7 +79,7 @@ class Truck:
         for z in range(self.height):
             for x in range(self.length):
                 for y in range(self.width):
-                    if self.matrix[x][y][0] == 0:
+                    if self.matrix[x][y][z] == 0:
                         po1 = (product.width, product.height, product.length)
                         po2 = (product.width, product.length, product.height)
                         po3 = (product.height, product.width, product.length)
@@ -92,6 +92,7 @@ class Truck:
                                 placements.append((x, y, z, x + po[0], y + po[1], z + po[2]))
             if len(placements) > 0:
                 return placements
+        return placements
 
     def is_bigger_than_self(self, product):
         product_dimensions = [product.length, product.width, product.height]
