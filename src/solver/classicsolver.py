@@ -7,6 +7,8 @@ from ..visualize3d import *
 @return: int
 return the minimal amount of trucks needed to store all the products
 """
+
+
 def get_minimal_amount_of_trucks(products, truckLength, truckWidth, truckHeight):
     total_volume = 0
     for product in products:
@@ -53,14 +55,18 @@ class ClassicSolver:
         products = self.parser.product_list
         products.sort(key=lambda product: product.volume, reverse=True)
 
-        # FIXME verify if a product is bigger than the truck
+        # for product in products:
+        #     if trucks[-1].is_bigger_than_self(product):
+        #         self.is_sat = False
+        #         print("not sat: product is bigger than truck, product: ", product)
+        #         return []
 
-        res = self._solverV2(trucks, products, 0, minimal_trucks_count)
+        res = self._solve(trucks, products, 0, minimal_trucks_count)
         self.is_sat = True
 
         return res
 
-    def _solverV2(self, trucks, products, idx, min_trucks_count):
+    def _solve(self, trucks, products, idx, min_trucks_count):
         if idx == len(products):
             return trucks
 
@@ -70,7 +76,8 @@ class ClassicSolver:
             for placement in placements:
                 x1, y1, z1, x2, y2, z2 = placement
                 truck.place_product(products[idx], x1, y1, z1, x2, y2, z2)
-                res = self._solverV2(trucks, products, idx + 1, min_trucks_count)
+                visualize3d([truck.matrix for truck in trucks])
+                res = self._solve(trucks, products, idx + 1, min_trucks_count)
 
                 if len(res) == min_trucks_count:
                     return res

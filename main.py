@@ -20,6 +20,7 @@ trucks = solver.solve()
 end = time.time()
 
 if not solver.is_sat:
+    print("No solution found")
     exit(0)
 
 print(f"Time: {round(end - start, 2)}s")
