@@ -10,35 +10,31 @@ adresses. Votre objectif est d′optimiser la répartition des colis dans les v�
 le nombre de véhicules utilisés tout en respectant les capacités de charge maximale de chaque
 véhicules.
 
-La description complète du projet est disponible sur Moodle [sujet.pdf](https://moodle.epita.fr/mod/resource/view.php?id=41270).
+La description complète du projet est disponible sur
+Moodle [sujet.pdf](https://moodle.epita.fr/mod/resource/view.php?id=41270).
 
-## Outils
+## Utilisation des solveurs ?
 
-Ce répertoire contient les outils suivants :
-- `generate.py` : générateur de données d’entrée
-- `visualize.py` : visualisateur de données de sortie
+### ETAPE 1 : les products ?
 
-### `generate.py`
+2 possibilités :
+- remplir le fichier input.sample dans test/ avec les produits à livrer
+- générer un fichier input.sample avec la fonction generate_products() dans test/generate.py
 
-Permet de gérénérer des données d'entrée pour le projet pour les trois leagues (bronze, silver et gold).
+`````python
+INPUT_FILE = 'test/input.sample'
+`````
 
-Utiliser la commande :
+### ETAPE 2 : le solveur ?
 
-```bash
-python3 generate.py --help
-```
+Vous pouvez choisir le solver dans main.py, par défaut c'est le solver de base qui est utilisé. (recherche local)
 
-Pour voir comment l’utiliser.
+`````python
+# CHOOSE YOUR SOLVER :
+solver = ClassicSolver(results)
+# solver = MilpSolverV2(results)
+`````
 
-### `visualize.py`
+### ETAPE 3 : lets go !
 
-Permet de visualiser les données de sortie du projet.
-
-Utiliser la commande :
-
-```bash
-python3 visualize.py --help
-```
-
-Pour voir comment l’utiliser.
-
+Lancer le main.py et le tour est joué !

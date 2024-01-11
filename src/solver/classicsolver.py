@@ -20,28 +20,29 @@ class ClassicSolver:
         self.trucks = []
         self.is_sat = False
 
+    # old solver
+    # def solve(self):
+    #     self.trucks = [Truck(1, self.parser.truck_length, self.parser.truck_width, self.parser.truck_height)]
+    #     self.parser.product_list.sort(key=lambda product: product.volume, reverse=True)
+    #
+    #     for product in self.parser.product_list:
+    #         for truck in self.trucks:
+    #             if not truck.is_bigger_than_self(product):
+    #                 self.is_sat = False
+    #                 return
+    #
+    #             if truck.can_place_product(product):
+    #                 break
+    #             if truck == self.trucks[-1]:
+    #                 self.trucks.append(Truck(len(self.trucks) + 1, self.parser.truck_length, self.parser.truck_width,
+    #                                          self.parser.truck_height))
+    #                 self.trucks[-1].can_place_product(product)
+    #                 break
+    #     self.is_sat = True
+    #
+    #     return self.trucks
+
     def solve(self):
-        self.trucks = [Truck(1, self.parser.truck_length, self.parser.truck_width, self.parser.truck_height)]
-        self.parser.product_list.sort(key=lambda product: product.volume, reverse=True)
-
-        for product in self.parser.product_list:
-            for truck in self.trucks:
-                if not truck.is_bigger_than_self(product):
-                    self.is_sat = False
-                    return
-
-                if truck.can_place_product(product):
-                    break
-                if truck == self.trucks[-1]:
-                    self.trucks.append(Truck(len(self.trucks) + 1, self.parser.truck_length, self.parser.truck_width,
-                                             self.parser.truck_height))
-                    self.trucks[-1].can_place_product(product)
-                    break
-        self.is_sat = True
-
-        return self.trucks
-
-    def solverV2(self):
         minimal_trucks_count = get_minimal_amount_of_trucks(self.parser.product_list, self.parser.truck_length,
                                                             self.parser.truck_width, self.parser.truck_height)
         trucks = []
@@ -55,30 +56,22 @@ class ClassicSolver:
         # FIXME verify if a product is bigger than the truck
 
         res = self._solverV2(trucks, products, 0, minimal_trucks_count)
-        print("count", len(res), res)
         self.is_sat = True
 
         return res
 
     def _solverV2(self, trucks, products, idx, min_trucks_count):
-        # on cherche tt les position pour placer le produit dans le premier camion
-
         if idx == len(products):
-            print("idx", idx, "len", len(products), "trucks", len(trucks))
             return trucks
 
         for truck in trucks:
             placements = truck.placements(products[idx])
-            print("product", products[idx], "nb placements", len(placements), "nb trucks", len(trucks), placements)
 
             for placement in placements:
                 x1, y1, z1, x2, y2, z2 = placement
                 truck.place_product(products[idx], x1, y1, z1, x2, y2, z2)
-                print("placing product", products[idx], "in truck", truck.id, "at", placement)
-                #visualize3d([truck.matrix for truck in trucks])
                 res = self._solverV2(trucks, products, idx + 1, min_trucks_count)
 
-                print("res", len(res), min_trucks_count)
                 if len(res) == min_trucks_count:
                     return res
 
