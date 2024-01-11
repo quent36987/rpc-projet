@@ -29,6 +29,65 @@ class ClassicSolver:
 
         return self.trucks
 
+    def solverV2(self):
+        trucks = [Truck(1, self.parser.truck_length, self.parser.truck_width, self.parser.truck_height)]
+        products = self.parser.product_list
+        products.sort(key=lambda product: product.volume, reverse=True)
+
+        # FIXME verify if a product is bigger than the truck
+
+
+        res = self._solverV2(trucks, products, 0)
+        print("count", len(res),res)
+        self.is_sat = True
+        return res
+
+    def _solverV2(self, trucks, products, idx):
+        print(idx)
+        solve_count = len(products)
+        res = []
+        if idx == len(products):
+            return trucks
+
+        for truck in trucks:
+            placements = truck.placements(products[idx])
+            print("product", products[idx], "nb placements", len(placements), "nb trucks", len(trucks))
+
+            for placement in placements:
+                x1, y1, z1, x2, y2, z2 = placement
+                truck.place_product(products[idx], x1, y1, z1, x2, y2, z2)
+                visualize3d([truck.matrix for truck in trucks])
+                res = self._solverV2(trucks, products, idx + 1)
+                if len(res) < solve_count:
+                    solve_count = len(res)
+                    res = trucks
+
+                print("solve_count", solve_count)
+                truck.remove_product(products[idx], placement)
+
+            if len(placement) > 0:
+                break
+
+
+            if truck == trucks[-1]:
+                trucks.append(Truck(len(trucks) + 1, self.parser.truck_length, self.parser.truck_width,
+                                    self.parser.truck_height))
+
+                placements = trucks[-1].placements(products[idx])
+                for placement in placements:
+                    x1, y1, z1, x2, y2, z2 = placement
+                    trucks[-1].place_product(products[idx], x1, y1, z1, x2, y2, z2)
+                    res = self._solverV2(trucks, products, idx + 1)
+                    if len(res) < solve_count:
+                        solve_count = len(res)
+                        res = trucks
+
+
+                    trucks[-1].remove_product(products[idx], placement)
+                break
+
+        return res
+
     def output(self, output_path="output.txt"):
         with open(output_path, 'w') as file:
             if self.is_sat:

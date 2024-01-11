@@ -6,7 +6,7 @@ from src.solver.milpprio import MilpSolverPriority
 from src.visualize3d import visualize3d
 import time
 
-INPUT_FILE = 'test/input.sample'
+INPUT_FILE = 'test/input1.sample'
 
 parser = Parser()
 results = parser.parse_file(INPUT_FILE)
@@ -17,7 +17,7 @@ solver = ClassicSolver(results)
 
 # solver = MilpSolverV2(results)
 start = time.time()
-trucks = solver.solve()
+trucks = solver.solverV2()
 end = time.time()
 
 if not solver.is_sat:

@@ -36,6 +36,41 @@ class Truck:
         self.products.append((product, [x1, y1, z1, x2, y2, z2]))
         return True
 
+    def remove_product(self, product, coordinates):
+        x1, y1, z1, x2, y2, z2 = coordinates
+        for x in range(x1, x2):
+            for y in range(y1, y2):
+                for z in range(z1, z2):
+                    self.matrix[x][y][z] = 0
+
+        self.products.remove((product, [x1, y1, z1, x2, y2, z2]))
+
+
+    # return a list of possible placements for a product
+    # return type [(x1, y1, z1, x2, y2, z2),...]
+    def placements(self, product):
+        placements = []
+        for x1 in range(0, self.length):
+            for y1 in range(0, self.width):
+                for z1 in range(0, self.height):
+                    if self.matrix[x1][y1][z1] == 0:
+                        if x1 + product.width <= self.length and y1 + product.height <= self.width and z1 + product.length <= self.height:
+                            for x2 in range(x1, x1 + product.width):
+                                for y2 in range(y1, y1 + product.height):
+                                    for z2 in range(z1, z1 + product.length):
+                                        if self.matrix[x2][y2][z2] != 0:
+                                            break
+                                    else:
+                                        continue
+                                    break
+                                else:
+                                    continue
+                                break
+                            else:
+                                placements.append((x1, y1, z1, x1 + product.width, y1 + product.height, z1 + product.length))
+        return placements
+
+
     def is_bigger_than_self(self, product):
         product_dimensions = [product.length, product.width, product.height]
         truck_dimensions = [self.length, self.width, self.height]
