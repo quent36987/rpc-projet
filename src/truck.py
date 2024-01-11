@@ -46,29 +46,48 @@ class Truck:
         self.products.remove((product, [x1, y1, z1, x2, y2, z2]))
 
 
+    def is_fitting_in(self, x1, y1, z1, x2, y2, z2):
+        """
+            Check if a product is fitting in a given spot
+            :return:  true if the product fits in the given spot, false otherwise
+        """
+        # Preconditions
+        if x2 > self.length or y2 > self.width or z2 > self.height:
+            return False
+        for x in range(x1, x2):
+            for y in range(y1, y2):
+                for z in range(z1, z2):
+                    if self.matrix[x][y][z] != 0:
+                        return False
+        return True
+
+
     # return a list of possible placements for a product
     # return type [(x1, y1, z1, x2, y2, z2),...]
+    # parcourir le niveau le plus au fond du camion (en 2D)
+    # for un for sur x et y
+    # pour toutes les cases libres, on tente de placer le colis dans tous les positions
+    # si on trouve des positions libres on renvoie les resultats, sinon on avance d'un cran et on recommence
     def placements(self, product):
         placements = []
-        for x1 in range(0, self.length):
-            for y1 in range(0, self.width):
-                for z1 in range(0, self.height):
-                    if self.matrix[x1][y1][z1] == 0:
-                        if x1 + product.width <= self.length and y1 + product.height <= self.width and z1 + product.length <= self.height:
-                            for x2 in range(x1, x1 + product.width):
-                                for y2 in range(y1, y1 + product.height):
-                                    for z2 in range(z1, z1 + product.length):
-                                        if self.matrix[x2][y2][z2] != 0:
-                                            break
-                                    else:
-                                        continue
-                                    break
-                                else:
-                                    continue
-                                break
-                            else:
-                                placements.append((x1, y1, z1, x1 + product.width, y1 + product.height, z1 + product.length))
-        return placements
+        for z in range(self.height):
+            for x in range(self.length):
+                for y in range(self.width):
+                    if self.matrix[x][y][0] == 0:
+                        po1 = (product.width, product.height, product.length)
+                        po2 = (product.width, product.length, product.height)
+                        po3 = (product.height, product.width, product.length)
+                        po4 = (product.height, product.length, product.width)
+                        po5 = (product.length, product.width, product.height)
+                        po6 = (product.length, product.height, product.width)
+                        pos = {po1, po2, po3, po4, po5, po6}
+                        for po in pos:
+                            if self.is_fitting_in(x, y, z, x + po[0], y + po[1], z+po[2]):
+                                placements.append((x, y, z, x + po[0], y + po[1], z+po[2]))
+            if len(placements) > 0:
+                return placements
+
+
 
 
     def is_bigger_than_self(self, product):
