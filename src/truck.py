@@ -1,6 +1,4 @@
-import math
-
-from visualize3d import *
+from .visualize3d import *
 import sys
 
 
@@ -163,14 +161,3 @@ class Truck:
     def visualize3D(self):
         visualize3d(self.matrix)
 
-    """
-    @param products: list of Product
-    @return: int
-    return the minimal amount of trucks needed to store all the products
-    """
-
-    def get_minimal_amount_of_trucks(self, products):
-        total_volume = 0
-        for product in products:
-            total_volume += product.volume
-        return math.ceil(total_volume / (self.length * self.width * self.height))

@@ -1,5 +1,17 @@
 from ..truck import Truck
+import math
 from ..visualize3d import *
+
+"""
+@param products: list of Product
+@return: int
+return the minimal amount of trucks needed to store all the products
+"""
+def get_minimal_amount_of_trucks(products, truckLength, truckWidth, truckHeight):
+    total_volume = 0
+    for product in products:
+        total_volume += product.volume
+    return math.ceil(total_volume / (truckLength * truckWidth * truckHeight))
 
 
 class ClassicSolver:
@@ -30,7 +42,8 @@ class ClassicSolver:
         return self.trucks
 
     def solverV2(self):
-        minimal_trucks_count = xx
+        minimal_trucks_count = get_minimal_amount_of_trucks(self.parser.product_list, self.parser.truck_length,
+                                                            self.parser.truck_width, self.parser.truck_height)
         trucks = []
 
         for i in range(minimal_trucks_count):
@@ -42,7 +55,7 @@ class ClassicSolver:
         # FIXME verify if a product is bigger than the truck
 
         res = self._solverV2(trucks, products, 0, len(products))
-        print("count", len(res),res)
+        print("count", len(res), res)
         self.is_sat = True
 
         return res
@@ -61,6 +74,7 @@ class ClassicSolver:
             for placement in placements:
                 x1, y1, z1, x2, y2, z2 = placement
                 truck.place_product(products[idx], x1, y1, z1, x2, y2, z2)
+                print("placing product", products[idx], "in truck", truck.id, "at", placement)
                 visualize3d([truck.matrix for truck in trucks])
                 res = self._solverV2(trucks, products, idx + 1, min_trucks_count)
 
@@ -71,11 +85,11 @@ class ClassicSolver:
 
             if len(placement) > 0:
                 return []
-            
+
             if len(placement) == 0 and truck == trucks[-1]:
                 return []
 
-        return res
+        return trucks
 
     def output(self, output_path="output.txt"):
         with open(output_path, 'w') as file:
