@@ -1,12 +1,10 @@
 from src.parser.parser import Parser
 from src.solver.classicsolver import ClassicSolver
-from src.solver.milp import MilpSolver
-from src.solver.milp2 import MilpSolverV2
-from src.solver.milpprio import MilpSolverPriority
 from src.visualize3d import visualize3d
 import time
 
 INPUT_FILE = 'test/input.sample'
+#INPUT_FILE = 'test/all-in-one-trucks.txt'
 
 parser = Parser()
 results = parser.parse_file(INPUT_FILE)

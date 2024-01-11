@@ -46,6 +46,7 @@ def cubes(pos_x, pos_y, pos_z, color, name=None):
                      lighting={'diffuse': 0.1, 'specular': 2.0, 'roughness': 0.5},
                      name=name)
 
+
 def visualize3d(matrixes):
     fig = make_subplots(rows=len(matrixes), cols=1, subplot_titles=[f"Truck {i + 1}" for i in range(len(matrixes))],
                         specs=[[{'type': 'scatter3d'}] for _ in range(len(matrixes))])
@@ -78,4 +79,9 @@ def visualize3d(matrixes):
         fig.add_trace(invisible_cube, row=idx + 1, col=1)
 
     fig.update_layout(height=600 * len(matrixes), width=800, title_text="Trucks", title_font_size=30)
-    fig.show()
+    # save in a png file
+
+    random_int = np.random.randint(100000)
+    fig.write_image("images/fig_" + str(random_int) + ".png")
+    idx += 1
+    #fig.show()
