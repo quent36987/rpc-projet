@@ -1,4 +1,6 @@
-from .visualize3d import *
+import math
+
+from visualize3d import *
 import sys
 
 
@@ -14,6 +16,12 @@ class Truck:
     def place_product(self, product, x1, y1, z1, x2, y2, z2):
         """
             Places a product in the truck
+            :param z2:
+            :param y2:
+            :param x2:
+            :param z1:
+            :param y1:
+            :param x1:
             :param product: the product to place
             :return:  true if the product was placed, false otherwise
         """
@@ -25,7 +33,9 @@ class Truck:
             for y in range(y1, y2):
                 for z in range(z1, z2):
                     if self.matrix[x][y][z] != 0:
-                        print(f"Error: product {product.id} overlaps with product {self.matrix[x][y][z]} in the truck {self.id}"),
+                        print(
+                            f"Error: product {product.id} overlaps with product "
+                            f"{self.matrix[x][y][z]} in the truck {self.id}"),
                         return False
 
         # Actual placing
@@ -45,7 +55,6 @@ class Truck:
 
         self.products.remove((product, [x1, y1, z1, x2, y2, z2]))
 
-
     def is_fitting_in(self, x1, y1, z1, x2, y2, z2):
         """
             Check if a product is fitting in a given spot
@@ -60,7 +69,6 @@ class Truck:
                     if self.matrix[x][y][z] != 0:
                         return False
         return True
-
 
     # return a list of possible placements for a product
     # return type [(x1, y1, z1, x2, y2, z2),...]
@@ -82,13 +90,10 @@ class Truck:
                         po6 = (product.length, product.height, product.width)
                         pos = {po1, po2, po3, po4, po5, po6}
                         for po in pos:
-                            if self.is_fitting_in(x, y, z, x + po[0], y + po[1], z+po[2]):
-                                placements.append((x, y, z, x + po[0], y + po[1], z+po[2]))
+                            if self.is_fitting_in(x, y, z, x + po[0], y + po[1], z + po[2]):
+                                placements.append((x, y, z, x + po[0], y + po[1], z + po[2]))
             if len(placements) > 0:
                 return placements
-
-
-
 
     def is_bigger_than_self(self, product):
         product_dimensions = [product.length, product.width, product.height]
@@ -112,7 +117,8 @@ class Truck:
         @param y: int
         @param z: int
         @return: bool
-        Search for the first available place in the truck and place the product if it fits, otherwise keep searching and if there is no place return False
+        Search for the first available place in the truck and place the product if it fits,
+        otherwise keep searching and if there is no place return False
     '''
 
     def can_place_product(self, product):
@@ -120,7 +126,8 @@ class Truck:
             for y2 in range(0, self.height):
                 for z2 in range(0, self.length):
                     if self.matrix[x2][y2][z2] == 0:
-                        if x2 + product.width <= self.width and y2 + product.height <= self.height and z2 + product.length <= self.length:
+                        if (x2 + product.width <= self.width and y2 + product.height <= self.height
+                                and z2 + product.length <= self.length):
                             for x3 in range(x2, x2 + product.width):
                                 for y3 in range(y2, y2 + product.height):
                                     for z3 in range(z2, z2 + product.length):
@@ -155,3 +162,15 @@ class Truck:
 
     def visualize3D(self):
         visualize3d(self.matrix)
+
+    """
+    @param products: list of Product
+    @return: int
+    return the minimal amount of trucks needed to store all the products
+    """
+
+    def get_minimal_amount_of_trucks(self, products):
+        total_volume = 0
+        for product in products:
+            total_volume += product.volume
+        return math.ceil(total_volume / (self.length * self.width * self.height))
