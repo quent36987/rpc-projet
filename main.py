@@ -6,15 +6,16 @@ from src.solver.milpprio import MilpSolverPriority
 from src.visualize3d import visualize3d
 import time
 
-INPUT_FILE = 'test/flo.txt'
+INPUT_FILE = 'test/input.sample'
 
 parser = Parser()
 results = parser.parse_file(INPUT_FILE)
 
-# solver = ClassicSolver(results)
+solver = ClassicSolver(results)
+
 # solver = MilpSolverV2(results)
 
-solver = MilpSolverV2(results)
+# solver = MilpSolverV2(results)
 start = time.time()
 trucks = solver.solve()
 end = time.time()
@@ -25,4 +26,4 @@ if not solver.is_sat:
 print(f"Time: {round(end - start, 2)}s")
 # Map content of a truc to list of volume
 print(f"Total volume of trucks used: {len(trucks)}")
-# visualize3d([truck.matrix for truck in trucks])
+visualize3d([truck.matrix for truck in trucks])

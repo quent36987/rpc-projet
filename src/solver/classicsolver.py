@@ -24,6 +24,7 @@ class ClassicSolver:
                     self.trucks.append(Truck(len(self.trucks) + 1, self.parser.truck_length, self.parser.truck_width,
                                              self.parser.truck_height))
                     self.trucks[-1].can_place_product(product)
+                    break
         self.is_sat = True
 
         return self.trucks
