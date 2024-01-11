@@ -30,13 +30,12 @@ class ClassicSolver:
         return self.trucks
 
     def solverV2(self):
+        minimal_trucks_count = xx
         trucks = [Truck(1, self.parser.truck_length, self.parser.truck_width, self.parser.truck_height)]
         products = self.parser.product_list
         products.sort(key=lambda product: product.volume, reverse=True)
 
         # FIXME verify if a product is bigger than the truck
-
-    
 
         res = self._solverV2(trucks, products, 0, len(products))
         print("count", len(res),res)
@@ -46,14 +45,8 @@ class ClassicSolver:
     def _solverV2(self, trucks, products, idx, min_trucks_count):
         # on cherche tt les position pour placer le produit dans le premier camion
 
-
-        print(idx)
-        if len(trucks) > min_trucks_count:
-            print("return to big :( ", len(trucks), min_trucks_count)
-            return trucks
-        solve_count = min_trucks_count
-        res = []
         if idx == len(products):
+            print("idx", idx, "len", len(products), "trucks", len(trucks))
             return trucks
 
         for truck in trucks:
@@ -64,34 +57,15 @@ class ClassicSolver:
                 x1, y1, z1, x2, y2, z2 = placement
                 truck.place_product(products[idx], x1, y1, z1, x2, y2, z2)
                 visualize3d([truck.matrix for truck in trucks])
-                res = self._solverV2(trucks, products, idx + 1, solve_count)
-                if len(res) < solve_count:
-                    solve_count = len(res)
-                    res = trucks
+                res = self._solverV2(trucks, products, idx + 1, min_trucks_count)
 
-                print("solve_count", solve_count)
+                if len(res) == min_trucks_count:
+                    return res
+
                 truck.remove_product(products[idx], placement)
 
             if len(placement) > 0:
-                break
-
-
-            if truck == trucks[-1]:
-                trucks.append(Truck(len(trucks) + 1, self.parser.truck_length, self.parser.truck_width,
-                                    self.parser.truck_height))
-
-                placements = trucks[-1].placements(products[idx])
-                for placement in placements:
-                    x1, y1, z1, x2, y2, z2 = placement
-                    trucks[-1].place_product(products[idx], x1, y1, z1, x2, y2, z2)
-                    res = self._solverV2(trucks, products, idx + 1)
-                    if len(res) < solve_count:
-                        solve_count = len(res)
-                        res = trucks
-
-
-                    trucks[-1].remove_product(products[idx], placement)
-                break
+                return []
 
         return res
 
