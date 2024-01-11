@@ -61,36 +61,50 @@ class ClassicSolver:
         #         print("not sat: product is bigger than truck, product: ", product)
         #         return []
 
-        res = self._solve(trucks, products, 0, minimal_trucks_count)
+        res = self._solve(trucks, products, 0, minimal_trucks_count, len(products))
         self.is_sat = True
 
         return res
 
-    def _solve(self, trucks, products, idx, min_trucks_count):
+    def _solve(self, trucks, products, idx, min_trucks_count, min_truck_finded):
         if idx == len(products):
             return trucks
+
+        result = []
 
         for truck in trucks:
             placements = truck.placements(products[idx])
 
             for placement in placements:
+
                 x1, y1, z1, x2, y2, z2 = placement
                 truck.place_product(products[idx], x1, y1, z1, x2, y2, z2)
                 visualize3d([truck.matrix for truck in trucks])
-                res = self._solve(trucks, products, idx + 1, min_trucks_count)
+                res = self._solve(trucks, products, idx + 1, min_trucks_count,min_truck_finded)
 
                 if len(res) == min_trucks_count:
                     return res
 
+                if len(result) == 0:
+                    result = res
+
+                if len(res) > 0 and  len(res) < len(result):
+                    result = res
+                    min_truck_finded = len(res)
+
                 truck.remove_product(products[idx], placement)
 
             if len(placements) > 0:
-                return []
+                return result
 
             if len(placements) == 0 and truck == trucks[-1]:
-                return []
+                if len(trucks) == min_trucks_count:
+                    return []
 
-        return trucks
+                trucks.append(Truck(len(trucks) + 1, self.parser.truck_length, self.parser.truck_width,
+                                     self.parser.truck_height))
+
+        return []
 
     def output(self, output_path="output.txt"):
         with open(output_path, 'w') as file:
