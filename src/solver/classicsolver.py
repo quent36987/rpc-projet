@@ -31,7 +31,11 @@ class ClassicSolver:
 
     def solverV2(self):
         minimal_trucks_count = xx
-        trucks = [Truck(1, self.parser.truck_length, self.parser.truck_width, self.parser.truck_height)]
+        trucks = []
+
+        for i in range(minimal_trucks_count):
+            trucks.append(Truck(i + 1, self.parser.truck_length, self.parser.truck_width, self.parser.truck_height))
+
         products = self.parser.product_list
         products.sort(key=lambda product: product.volume, reverse=True)
 
@@ -40,6 +44,7 @@ class ClassicSolver:
         res = self._solverV2(trucks, products, 0, len(products))
         print("count", len(res),res)
         self.is_sat = True
+
         return res
 
     def _solverV2(self, trucks, products, idx, min_trucks_count):
@@ -65,6 +70,9 @@ class ClassicSolver:
                 truck.remove_product(products[idx], placement)
 
             if len(placement) > 0:
+                return []
+            
+            if len(placement) == 0 and truck == trucks[-1]:
                 return []
 
         return res
