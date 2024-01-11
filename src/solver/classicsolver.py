@@ -36,28 +36,35 @@ class ClassicSolver:
 
         # FIXME verify if a product is bigger than the truck
 
+    
 
-        res = self._solverV2(trucks, products, 0)
+        res = self._solverV2(trucks, products, 0, len(products))
         print("count", len(res),res)
         self.is_sat = True
         return res
 
-    def _solverV2(self, trucks, products, idx):
+    def _solverV2(self, trucks, products, idx, min_trucks_count):
+        # on cherche tt les position pour placer le produit dans le premier camion
+
+
         print(idx)
-        solve_count = len(products)
+        if len(trucks) > min_trucks_count:
+            print("return to big :( ", len(trucks), min_trucks_count)
+            return trucks
+        solve_count = min_trucks_count
         res = []
         if idx == len(products):
             return trucks
 
         for truck in trucks:
             placements = truck.placements(products[idx])
-            print("product", products[idx], "nb placements", len(placements), "nb trucks", len(trucks))
+            print("product", products[idx], "nb placements", len(placements), "nb trucks", len(trucks), placements)
 
             for placement in placements:
                 x1, y1, z1, x2, y2, z2 = placement
                 truck.place_product(products[idx], x1, y1, z1, x2, y2, z2)
                 visualize3d([truck.matrix for truck in trucks])
-                res = self._solverV2(trucks, products, idx + 1)
+                res = self._solverV2(trucks, products, idx + 1, solve_count)
                 if len(res) < solve_count:
                     solve_count = len(res)
                     res = trucks
