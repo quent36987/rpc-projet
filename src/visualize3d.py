@@ -81,7 +81,6 @@ def visualize3d(matrixes):
     fig.update_layout(height=600 * len(matrixes), width=800, title_text="Trucks", title_font_size=30)
     # save in a png file
 
-    random_int = np.random.randint(100000)
-    fig.write_image("images/fig_" + str(random_int) + ".png")
-    idx += 1
-    #fig.show()
+    #random_int = np.random.randint(100000)
+    #fig.write_image("images/fig_" + str(random_int) + ".png")
+    fig.show()

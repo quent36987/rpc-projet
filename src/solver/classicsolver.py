@@ -55,11 +55,10 @@ class ClassicSolver:
         products = self.parser.product_list
         products.sort(key=lambda product: product.volume, reverse=True)
 
-        # for product in products:
-        #     if trucks[-1].is_bigger_than_self(product):
-        #         self.is_sat = False
-        #         print("not sat: product is bigger than truck, product: ", product)
-        #         return []
+        for product in products:
+            if not product.is_smaller_than(trucks[0]):
+                self.is_sat = False
+                return []
 
         res = self._solve(trucks, products, 0, minimal_trucks_count, len(products))
         self.is_sat = True
@@ -74,13 +73,11 @@ class ClassicSolver:
 
         for truck in trucks:
             placements = truck.placements(products[idx])
-
             for placement in placements:
 
                 x1, y1, z1, x2, y2, z2 = placement
                 truck.place_product(products[idx], x1, y1, z1, x2, y2, z2)
-                visualize3d([truck.matrix for truck in trucks])
-                res = self._solve(trucks, products, idx + 1, min_trucks_count,min_truck_finded)
+                res = self._solve(trucks, products, idx + 1, min_trucks_count, min_truck_finded)
 
                 if len(res) == min_trucks_count:
                     return res
@@ -88,7 +85,7 @@ class ClassicSolver:
                 if len(result) == 0:
                     result = res
 
-                if len(res) > 0 and  len(res) < len(result):
+                if 0 < len(res) < len(result):
                     result = res
                     min_truck_finded = len(res)
 
@@ -102,7 +99,7 @@ class ClassicSolver:
                     return []
 
                 trucks.append(Truck(len(trucks) + 1, self.parser.truck_length, self.parser.truck_width,
-                                     self.parser.truck_height))
+                                    self.parser.truck_height))
 
         return []
 

@@ -4,7 +4,6 @@ from src.visualize3d import visualize3d
 import time
 
 INPUT_FILE = 'test/input.sample'
-#INPUT_FILE = 'test/all-in-one-trucks.txt'
 
 parser = Parser()
 results = parser.parse_file(INPUT_FILE)
