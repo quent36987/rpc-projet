@@ -75,7 +75,7 @@ class Truck:
     # pour toutes les cases libres, on tente de placer le colis dans tous les positions
     # si on trouve des positions libres on renvoie les resultats, sinon on avance d'un cran et on recommence
     def placements(self, product):
-        placements = set()
+        placements = []
         for z in range(self.height):
             for x in range(self.length):
                 for y in range(self.width):
@@ -89,9 +89,10 @@ class Truck:
                         pos = {po1, po2, po3, po4, po5, po6}
                         for po in pos:
                             if self.is_fitting_in(x, y, z, x + po[0], y + po[1], z + po[2]):
-                                placements.add((x, y, z, x + po[0], y + po[1], z + po[2]))
+                                placements.append((x, y, z, x + po[0], y + po[1], z + po[2]))
             if len(placements) > 0:
                 return placements
+
         return placements
 
     def is_bigger_than_self(self, product):
